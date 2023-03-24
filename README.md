@@ -26,11 +26,13 @@ cd backend-saladeleitura
 
 Crie um ambiente virtual que será onde vamos rodar a aplicação.
 
-```Linux 
+```
+Linux 
 python3 -m venv env
 source env/bin/activate
 ```
-```Windows 
+```
+Windows 
 python3 -m venv env
 source env/script/activate
 ```
