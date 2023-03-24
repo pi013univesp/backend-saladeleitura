@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import pymysql
 
+from .config_database import USER, PASSWORD
+
 pymysql.install_as_MySQLdb()
 
 # Quick-start development settings - unsuitable for production
@@ -80,8 +82,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'saladeleitura',
-        'USER': '',
-        'PASSWORD': '',
+        'USER': USER,
+        'PASSWORD': PASSWORD,
         'HOST': 'localhost',
         'PORT': '3306',
         '': ''
