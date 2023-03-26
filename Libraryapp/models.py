@@ -11,7 +11,7 @@ class Library(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
     email = models.CharField(max_length=50)
-    senha = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
 
 
 class Client(models.Model):
