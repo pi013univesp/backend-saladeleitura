@@ -34,7 +34,7 @@ def verify_if_email_and_password_is_correct(email, user_password):
 
 def register_new_library(request_data):
     try:
-        log_print("Passando para json")
+        log_print("Passando request_data para o serializer")
         print(request_data)
         library = LibraryRegisterSerializer(data=request_data)
 
@@ -48,4 +48,44 @@ def register_new_library(request_data):
     except Exception as e:
         log_print(f"exception args:  {e.args}")
         log_print(f"Erro ao cadastrar, erro -> {type(e).__name__}")
-        return False  
+        return False 
+    
+def delete_library(pk):
+    try:
+        log_print("Procurando id no banco")
+        library = Library.objects.get(id=pk)
+        
+        log_print("Deletando biblioteca")
+        library.delete()
+
+        return True
+    except Exception as e:
+        log_print(f"exception args:  {e.args}")
+        log_print(f"Erro ao deletar, erro -> {type(e).__name__}")
+        return False 
+    
+
+def update_library(
+    pk,
+    name=None,
+    address=None,
+    email=None,
+    password=None
+):
+    try:
+        library = Library.objects.get(id=pk)
+        log_print(f"fazendo atualizacoes:  nome:{name}, endereco:{address}, email:{email}, senha: {password}")
+
+        library.name = name if name != None else library.name
+        library.address = address if address != None else library.address
+        library.email = email if email != None else library.email
+        library.password = password if password != None else library.password
+
+        log_print(f"Salvando no banco")
+        library.save()
+        return True
+    
+    except Exception as e:
+        log_print(f"exception args:  {e.args}")
+        log_print(f"Erro ao atualizar, erro -> {type(e).__name__}")
+        return False 
