@@ -19,3 +19,10 @@ class LibraryRegisterSerializer(serializers.ModelSerializer):
             "email",
             "password",
         )
+
+class LibraryDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Library
+        fields = (
+            "id"
+        )
