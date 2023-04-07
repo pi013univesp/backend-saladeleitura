@@ -2,17 +2,12 @@ from django.http import JsonResponse
 from http import HTTPStatus
 from rest_framework.generics import GenericAPIView
 from Libraryapp.Serializers.ClientSerializer import ClientRegisterSerializer, ClientGetSerializer
-from Libraryapp.Code.ClientViewCode import (
-    register_new_client,
-    delete_client,
-    update_client,
-)
 from Libraryapp.utils.functions import log_print
 from Libraryapp.models import Client
-import json
 
 
 class GetAllView(GenericAPIView):
+    serializer_class = ClientRegisterSerializer
     def get(self, request, *args, **kwargs):
         try:
             log_print("retornando todos os clientes")
@@ -37,6 +32,8 @@ class GetAllView(GenericAPIView):
 
 
 class GetClientByIdView(GenericAPIView):
+    queryset = Client.objects.all()
+    serializer_class = ClientRegisterSerializer
     def get(self, request, *args, **kwargs):
         try:
             pk = kwargs.get('pk')
@@ -64,9 +61,14 @@ class RegisterView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         try:
             request_data = request.data
-            register = register_new_client(request_data)
 
-            if register:
+            log_print("Passando request_data para o serializer")
+            print(request_data)
+            client = ClientRegisterSerializer(data=request_data)
+
+            if client.is_valid():
+                log_print(f"Salvando no banco")
+                client.save()
                 return JsonResponse({
                     "message": "Cliente Cadastrado",
                 }, status=HTTPStatus.CREATED)
@@ -85,19 +87,20 @@ class RegisterView(GenericAPIView):
 
 class DeleteView(GenericAPIView):
     """ Esse endpoint deleta um cliente no banco pelo seu id"""
+    queryset = Client.objects.all()
+    serializer_class = ClientRegisterSerializer
     def delete(self, request, *args, **kwargs):
         try:
             pk = kwargs.get('pk')
-            register_deleted = delete_client(pk)
-
-            if register_deleted:
-                return JsonResponse({
-                    "message": "Cliente Deletado",
-                }, status=HTTPStatus.OK)
+            log_print("Procurando id no banco")
+            client = Client.objects.get(id=pk)
             
+            log_print("Deletando cliente")
+            client.delete()
+
             return JsonResponse({
-                    "message": "Erro ao deletar cliente",
-                }, status=HTTPStatus.BAD_REQUEST)
+                "message": "Cliente Deletado",
+            }, status=HTTPStatus.OK)
 
         except Exception as e:
             return JsonResponse({
@@ -108,6 +111,7 @@ class DeleteView(GenericAPIView):
 
 class UpdateView(GenericAPIView):
     """ Esse endpoint atualiza dados de um cliente no banco pelo seu id"""
+    queryset = Client.objects.all()
     serializer_class = ClientRegisterSerializer
     def put(self, request, *args, **kwargs):
         try:
@@ -118,21 +122,19 @@ class UpdateView(GenericAPIView):
             phone = request_data.get("phone")
             address = request_data.get("address")
 
-            register_update = update_client(
-                pk,
-                name,
-                phone,
-                address,
-            )
+            client = Client.objects.get(id=pk)
+            log_print(f"fazendo atualizacoes:  nome:{name}, endereco:{address}, telefone:{phone}")
 
-            if register_update:
-                return JsonResponse({
-                    "message": "Cliente Atualizado",
-                }, status=HTTPStatus.OK)
+            client.name = name if name != None else client.name
+            client.address = address if address != None else client.address
+            client.phone = phone if phone != None else client.phone
             
+            log_print(f"Salvando no banco")
+            client.save()
+
             return JsonResponse({
-                    "message": "Erro ao Atualizar o cliente",
-                }, status=HTTPStatus.BAD_REQUEST)
+                "message": "Cliente Atualizado",
+            }, status=HTTPStatus.OK)
 
         except Exception as e:
             return JsonResponse({

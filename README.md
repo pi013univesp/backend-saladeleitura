@@ -56,8 +56,8 @@ create database saladeleitura;
 Agora volte ao backend-saladeleitura e rode os comandos:
 
 ``` 
-python3 manage.py makemigrations Libraryapp   
-python3 manage.py migrate Libraryapp 
+python3 manage.py makemigrations 
+python3 manage.py migrate 
 ```
 
 Feito isso o banco estara populado com as tabelas e você já poderá realizar suas consultas nele.

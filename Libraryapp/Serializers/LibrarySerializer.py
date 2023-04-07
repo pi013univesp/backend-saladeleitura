@@ -14,15 +14,9 @@ class LibraryRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Library
         fields = (
+            "id",
             "name",
             "address",
             "email",
             "password",
-        )
-
-class LibraryDeleteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Library
-        fields = (
-            "id"
         )
