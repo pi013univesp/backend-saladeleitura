@@ -4,11 +4,6 @@ from rest_framework.generics import GenericAPIView
 from Libraryapp.models import Literary_genres
 from Libraryapp.utils.functions import log_print
 from Libraryapp.Serializers.LiteraryGenreSerializer import LiteraryGenresSerializer
-from Libraryapp.Code.LiteraryGenreCode import (
-    register_new_literary_genre,
-    update_literary_genre,
-    delete_literary_genre
-)
 
 
 class GetAllView(GenericAPIView):
@@ -37,6 +32,7 @@ class GetAllView(GenericAPIView):
 
 
 class GetLiteraryGenreByIdView(GenericAPIView):
+    queryset = Literary_genres.objects.all()
     serializer_class = LiteraryGenresSerializer
     def get(self, request, *args, **kwargs):
         try:
@@ -64,9 +60,15 @@ class RegisterView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         try:
             request_data = request.data
-            register = register_new_literary_genre(request_data)
+            log_print("Passando request_data para o serializer")
+            print(request_data)
+            literary_genre = LiteraryGenresSerializer(data=request_data)
 
-            if register:
+            if literary_genre.is_valid():
+                log_print(f"Salvando no banco")
+                literary_genre.save()
+
+
                 return JsonResponse({
                     "message": "Genero Literario Cadastrado",
                 }, status=HTTPStatus.CREATED)
@@ -85,19 +87,20 @@ class RegisterView(GenericAPIView):
 
 class DeleteView(GenericAPIView):
     """ Esse endpoint deleta um Genero Literario no banco pelo seu id"""
+    queryset = Literary_genres.objects.all()
+    serializer_class = LiteraryGenresSerializer
     def delete(self, request, *args, **kwargs):
         try:
             pk = kwargs.get('pk')
-            register_deleted = delete_literary_genre(pk)
-
-            if register_deleted:
-                return JsonResponse({
-                    "message": "Genero Literario Deletado",
-                }, status=HTTPStatus.OK)
+            log_print("Procurando id no banco")
+            literary_genre = Literary_genres.objects.get(id=pk)
             
+            log_print("Deletando literary_genre")
+            literary_genre.delete()
+
             return JsonResponse({
-                    "message": "Erro ao deletar Genero Literario",
-                }, status=HTTPStatus.BAD_REQUEST)
+                "message": "Genero Literario Deletado",
+            }, status=HTTPStatus.OK)
 
         except Exception as e:
             return JsonResponse({
@@ -109,6 +112,7 @@ class DeleteView(GenericAPIView):
 
 class UpdateView(GenericAPIView):
     """ Esse endpoint atualiza dados de um Genero Literario no banco pelo seu id"""
+    queryset = Literary_genres.objects.all()
     serializer_class = LiteraryGenresSerializer
     def put(self, request, *args, **kwargs):
         try:
@@ -117,19 +121,18 @@ class UpdateView(GenericAPIView):
 
             genre = request_data.get("genre")
 
-            register_update = update_literary_genre(
-                pk,
-                genre,
-            )
+            literary_genre = Literary_genres.objects.get(id=pk)
+            log_print(f"fazendo atualizacoes:  genero:{genre}")
 
-            if register_update:
-                return JsonResponse({
-                    "message": "Genero Literario Atualizado",
-                }, status=HTTPStatus.OK)
-            
+            literary_genre.genre = genre if genre != None else literary_genre.genre
+
+
+            log_print(f"Salvando no banco")
+            literary_genre.save()
+
             return JsonResponse({
-                    "message": "Erro ao Atualizar o Genero Literario",
-                }, status=HTTPStatus.BAD_REQUEST)
+                "message": "Genero Literario Atualizado",
+            }, status=HTTPStatus.OK)
 
         except Exception as e:
             return JsonResponse({
