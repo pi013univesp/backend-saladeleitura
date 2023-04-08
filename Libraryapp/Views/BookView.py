@@ -135,7 +135,6 @@ class UpdateView(GenericAPIView):
 
             book.title = title if title != None else book.title
             book.author = author if author != None else book.author
-            book.literary_genre_fk = Literary_genres.objects.get(id=literary_genre_fk) if literary_genre_fk != None else book.literary_genre_fk
             book.publisher = publisher if publisher != None else book.publisher
             book.number_of_pages = number_of_pages if number_of_pages != None else book.number_of_pages
             book.resume = resume if resume != None else book.resume
