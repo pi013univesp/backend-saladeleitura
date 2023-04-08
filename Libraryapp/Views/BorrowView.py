@@ -115,6 +115,12 @@ class RegisterView(GenericAPIView):
                 
                 log_print("Passando request_data para o serializer")
                 borrow_save = BorrowSerializer(data=request_data)
+
+                inDate = datetime.now()
+                date_formated = inDate.strftime("%Y-%m-%d %H:%M:%S")
+
+                log_print("salvando emprestimo e livro na biblioteca")
+                borrow_save.borrow_date = date_formated
                 
                 if borrow_save.is_valid():
                     log_print(f"Salvando no banco")
@@ -147,10 +153,18 @@ class DeleteView(GenericAPIView):
             pk = kwargs.get('pk')
 
             log_print("Procurando id no banco")
-            book = Borrow.objects.get(id=pk)
+            borrow = Borrow.objects.get(id=pk)
         
+
+            log_print("procurando o livro na biblioteca")
+            bookAtLibrary = Books_at_library.objects.get(book_fk=borrow.book_fk)
+            log_print("removendo o numero de livros emprestados")
+            if bookAtLibrary.number_of_borrowed_books > 0:
+                bookAtLibrary.number_of_borrowed_books -= 1 
+                bookAtLibrary.save()
+
             log_print("Deletando emprestimo")
-            book.delete()
+            borrow.delete()
 
             return JsonResponse({
                 "message": "Emprestimo Deletado",
@@ -225,8 +239,8 @@ class BorrowCloseView(GenericAPIView):
                 date_formated = inDate.strftime("%Y-%m-%d %H:%M:%S")
 
                 log_print("salvando emprestimo e livro na biblioteca")
-                borrow.save()
                 borrow.return_date = date_formated
+                borrow.save()
 
                 log_print("procurando o livro na biblioteca")
                 bookAtLibrary = Books_at_library.objects.get(book_fk=borrow.book_fk)
