@@ -153,7 +153,7 @@ class UpdateView(GenericAPIView):
             library.name = name if name != None else library.name
             library.address = address if address != None else library.address
             library.email = email if email != None else library.email
-            library.password = password if password != None else library.password
+            library.password = encrypt_password(password) if password != None else library.password
 
             log_print(f"Salvando no banco")
             library.save()
