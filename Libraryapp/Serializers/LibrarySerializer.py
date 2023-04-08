@@ -20,3 +20,14 @@ class LibraryRegisterSerializer(serializers.ModelSerializer):
             "email",
             "password",
         )
+
+class GETLibrarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Library
+        fields = (
+            "id",
+            "name",
+            "address",
+            "email",
+        )
+

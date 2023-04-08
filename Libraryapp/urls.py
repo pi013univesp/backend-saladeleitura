@@ -45,4 +45,6 @@ urlpatterns = [
     path('borrow/delete/<int:pk>', BorrowView.DeleteView.as_view(), name='borrow-delete'),
     path('borrow/register/', BorrowView.RegisterView.as_view(), name='borrow-register'),
     path('borrow/update/<int:pk>', BorrowView.UpdateView.as_view(), name='borrow-update'),
+    path('borrow/close/<int:pk>', BorrowView.BorrowCloseView.as_view(), name='borrow-close'),
+    path('borrow/in-debt/', BorrowView.GetAllBorrowInDebt.as_view(), name='borrow-get-all-debt'),
 ]

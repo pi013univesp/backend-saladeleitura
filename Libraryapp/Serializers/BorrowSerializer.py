@@ -10,8 +10,7 @@ class BorrowSerializer(serializers.ModelSerializer):
             "client_fk",
             "library_fk",
             "borrow_date",
-            "end_date",
-            "return_date",
+            "end_date"
         )
 
 class GETBorrowSerializer(serializers.ModelSerializer):

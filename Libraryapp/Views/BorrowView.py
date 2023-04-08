@@ -4,6 +4,7 @@ from rest_framework.generics import  GenericAPIView
 from Libraryapp.Serializers.BorrowSerializer import BorrowSerializer, GETBorrowSerializer
 from Libraryapp.utils.functions import log_print
 from Libraryapp.models import Borrow, Client, Book, Library, Books_at_library
+from datetime import datetime
 
 
 class GetAllView(GenericAPIView):
@@ -31,6 +32,31 @@ class GetAllView(GenericAPIView):
                 "exception_args": e.args
             }, status=HTTPStatus.BAD_REQUEST)
         
+
+class GetAllBorrowInDebt(GenericAPIView):
+    """ Esse endpoint busca todos os emprestimos em debito da biblioteca no banco"""
+    serializer_class = GETBorrowSerializer
+    def get(self, request, *args, **kwargs):
+        try:
+            log_print("retornando todos os emprestimos")
+            borrow = Borrow.objects.all().filter(return_date=None)
+
+            list_borrows = []
+
+            for result in borrow:
+                print(result)
+                list_borrows.append(GETBorrowSerializer(result).data) 
+
+            return JsonResponse({
+                "data": list_borrows
+            }, status=HTTPStatus.OK)
+
+        except Exception as e:
+            return JsonResponse({
+                "message": "Ocorreu um erro inesperado",
+                "exception_name": type(e).__name__,
+                "exception_args": e.args
+            }, status=HTTPStatus.BAD_REQUEST)
 
 class GetBorrowByIdView(GenericAPIView):
     """ Esse endpoint busca um emprestimo da biblioteca por id no banco"""
@@ -88,22 +114,21 @@ class RegisterView(GenericAPIView):
                     }, status=HTTPStatus.BAD_REQUEST)
                 
                 log_print("Passando request_data para o serializer")
-                book = BorrowSerializer(data=request_data)
+                borrow_save = BorrowSerializer(data=request_data)
                 
-                if book.is_valid():
+                if borrow_save.is_valid():
                     log_print(f"Salvando no banco")
-                    book.save()
+                    borrow_save.save()
                     book_at_library.number_of_borrowed_books += 1
                     book_at_library.save()
 
                     return JsonResponse({
                         "message": "Emprestimo Cadastrado",
                     }, status=HTTPStatus.CREATED)
-            
-            
-            return JsonResponse({
-                "message": "Esse cliente tem pendencia de livro"
-            }, status=HTTPStatus.BAD_REQUEST)
+            else:
+                return JsonResponse({
+                    "message": "Esse cliente tem pendencia de livro"
+                }, status=HTTPStatus.BAD_REQUEST)
 
         except Exception as e:
             return JsonResponse({
@@ -182,3 +207,46 @@ class UpdateView(GenericAPIView):
                 "exception_name": type(e).__name__,
                 "exception_args": e.args
             }, status=HTTPStatus.BAD_REQUEST)
+
+
+class BorrowCloseView(GenericAPIView):
+    """Esse endpoint faz o fechamento de um emprestimo de livro"""
+    queryset = Borrow.objects.all()
+    serializer_class = GETBorrowSerializer
+    def get(self, request, *args, **kwargs):
+        try:
+            pk = kwargs.get('pk')
+            log_print("Buscando emprestimo por id")
+            borrow = Borrow.objects.get(id=pk)
+
+            if(borrow.return_date is None):
+                log_print("Adicionando a data de devolucao")
+                inDate = datetime.now()
+                date_formated = inDate.strftime("%Y-%m-%d %H:%M:%S")
+
+                log_print("salvando emprestimo e livro na biblioteca")
+                borrow.save()
+                borrow.return_date = date_formated
+
+                log_print("procurando o livro na biblioteca")
+                bookAtLibrary = Books_at_library.objects.get(book_fk=borrow.book_fk)
+                log_print("removendo o numerode livros emprestados")
+                if bookAtLibrary.number_of_borrowed_books > 0:
+                    bookAtLibrary.number_of_borrowed_books -= 1 
+                    bookAtLibrary.save()
+
+
+                return JsonResponse({
+                    "response": "Emprestimo finalizado",
+                }, status=HTTPStatus.OK)
+            
+            return JsonResponse({
+                "response":"Livro ja devolvido"
+            }, status=HTTPStatus.BAD_REQUEST)
+
+        except Exception as e:
+            return JsonResponse({
+                "message": "Ocorreu um erro inesperado",
+                "exception_name": type(e).__name__,
+                "exception_args": e.args
+            }, status=HTTPStatus.BAD_REQUEST)   

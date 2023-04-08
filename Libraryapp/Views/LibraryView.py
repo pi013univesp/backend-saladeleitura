@@ -4,16 +4,25 @@ from rest_framework.generics import GenericAPIView
 from Libraryapp.Serializers.LibrarySerializer import (
     LibraryLoginSerializer,
     LibraryRegisterSerializer,
+    GETLibrarySerializer,
 )
 from Libraryapp.utils.functions import log_print
 from Libraryapp.models import Library
+import bcrypt
 
 
+
+
+def encrypt_password(password):
+    salt = bcrypt.gensalt()
+    hash = bcrypt.hashpw(password.encode('utf-8'), salt)
+
+    return hash.decode('utf-8')
+                
 def verify_password(data, user_password):
-    if data["password"] == user_password:
-        return True
-    else:
-        return False
+    return bcrypt.checkpw(user_password.encode('utf-8'), data["password"].encode('utf-8'))
+
+    
 
 class LoginView(GenericAPIView): 
     """Esse endpoint busca uma biblioteca no banco para fazer login"""
@@ -64,8 +73,17 @@ class RegisterView(GenericAPIView):
                 email = request_data.get("email")
 
                 library = Library.objects.get(email=email)
+
+                return JsonResponse({
+                    "message": "Esse email ja esta em uso",
+                }, status=HTTPStatus.BAD_REQUEST)
             
             except Library.DoesNotExist:
+                password = request_data.get("password")
+                newPassword = encrypt_password(password)
+
+                request_data["password"] = newPassword
+                
                 log_print("Passando request_data para o serializer")
                 log_print(request_data)
                 library = LibraryRegisterSerializer(data=request_data)
@@ -154,7 +172,7 @@ class UpdateView(GenericAPIView):
 
 class GetAllView(GenericAPIView):
     """ Esse endpoint busca todas as bibliotecas no banco"""
-    serializer_class = LibraryRegisterSerializer
+    serializer_class = GETLibrarySerializer
     def get(self, request, *args, **kwargs):
         try:
             log_print("retornando todos os livros")
@@ -164,7 +182,7 @@ class GetAllView(GenericAPIView):
 
             for result in library:
                 print(result)
-                list_library.append(LibraryRegisterSerializer(result).data) 
+                list_library.append(GETLibrarySerializer(result).data) 
 
             return JsonResponse({
                 "data": list_library
@@ -181,13 +199,13 @@ class GetAllView(GenericAPIView):
 class GetLibraryByIdView(GenericAPIView):
     """ Esse endpoint busca uma biblioteca por id no banco"""
     queryset = Library.objects.all()
-    serializer_class = LibraryRegisterSerializer
+    serializer_class = GETLibrarySerializer
     def get(self, request, *args, **kwargs):
         try:
             pk = kwargs.get('pk')
             log_print("Buscando Livro por id")
             library = Library.objects.get(id=pk)
-            data = LibraryRegisterSerializer(library).data
+            data = GETLibrarySerializer(library).data
 
             return JsonResponse({
                 "data": data
