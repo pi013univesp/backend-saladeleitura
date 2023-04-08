@@ -136,8 +136,6 @@ class UpdateView(GenericAPIView):
             book.title = title if title != None else book.title
             book.author = author if author != None else book.author
             book.publisher = publisher if publisher != None else book.publisher
-            book.number_of_pages = number_of_pages if number_of_pages != None else book.number_of_pages
-            book.resume = resume if resume != None else book.resume
 
             log_print(f"Salvando no banco")
             book.save()
