@@ -1,7 +1,6 @@
 from django.urls import path
 from .Views import LibraryView
 from .Views import ClientView
-from .Views import LiteraryGenreView
 from .Views import BookView
 from .Views import BookAtLibraryView
 from .Views import BorrowView
@@ -21,12 +20,6 @@ urlpatterns = [
     path('client/delete/<int:pk>', ClientView.DeleteView.as_view(), name='client-delete'),
     path('client/register/', ClientView.RegisterView.as_view(), name='client-register'),
     path('client/update/<int:pk>', ClientView.UpdateView.as_view(), name='client-update'),
-
-    path('literary-genre/', LiteraryGenreView.GetAllView.as_view(), name='literary-genre-get-all'),
-    path('literary-genre/<int:pk>', LiteraryGenreView.GetLiteraryGenreByIdView.as_view(), name='literary-genre-get-id'),
-    path('literary-genre/delete/<int:pk>', LiteraryGenreView.DeleteView.as_view(), name='literary-genre-delete'),
-    path('literary-genre/register/', LiteraryGenreView.RegisterView.as_view(), name='literary-genre-register'),
-    path('literary-genre/update/<int:pk>', LiteraryGenreView.UpdateView.as_view(), name='literary-genre-update'),
 
     path('book/', BookView.GetAllView.as_view(), name='books-get-all'),
     path('book/<int:pk>', BookView.GetBookByIdView.as_view(), name='book-get-id'),

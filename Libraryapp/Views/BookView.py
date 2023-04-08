@@ -1,14 +1,14 @@
 from django.http import JsonResponse
 from http import HTTPStatus
 from rest_framework.generics import  GenericAPIView
-from Libraryapp.Serializers.BookSerializer import BookSerializer, GETBookSerializer
+from Libraryapp.Serializers.BookSerializer import BookSerializer
 from Libraryapp.utils.functions import log_print
-from Libraryapp.models import Book, Literary_genres
+from Libraryapp.models import Book
 
 
 class GetAllView(GenericAPIView):
     """ Esse endpoint busca todos os livros no banco"""
-    serializer_class = GETBookSerializer
+    serializer_class = BookSerializer
     def get(self, request, *args, **kwargs):
         try:
             log_print("retornando todos os livros")
@@ -18,7 +18,7 @@ class GetAllView(GenericAPIView):
 
             for result in books:
                 print(result)
-                list_books.append(GETBookSerializer(result).data) 
+                list_books.append(BookSerializer(result).data) 
 
             return JsonResponse({
                 "data": list_books
@@ -35,13 +35,13 @@ class GetAllView(GenericAPIView):
 class GetBookByIdView(GenericAPIView):
     """ Esse endpoint busca um livro por id no banco"""
     queryset = Book.objects.all()
-    serializer_class = GETBookSerializer
+    serializer_class = BookSerializer
     def get(self, request, *args, **kwargs):
         try:
             pk = kwargs.get('pk')
             log_print("Buscando Livro por id")
             book = Book.objects.get(id=pk)
-            data = GETBookSerializer(book).data
+            data = BookSerializer(book).data
 
             return JsonResponse({
                 "data": data
@@ -71,6 +71,7 @@ class RegisterView(GenericAPIView):
 
                 return JsonResponse({
                     "message": "Livro Cadastrado",
+                    "data": book.data
                 }, status=HTTPStatus.CREATED)
             
             return JsonResponse({

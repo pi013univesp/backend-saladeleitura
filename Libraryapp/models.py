@@ -1,11 +1,5 @@
 from django.db import models
-
-
-class Literary_genres(models.Model):
-    id = models.AutoField(primary_key=True)
-    genre = models.CharField(max_length=50)
-
-
+    
 class Library(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -25,13 +19,7 @@ class Book(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=50)
     author = models.CharField(max_length=50)
-    literary_genre_fk = models.ForeignKey(
-        Literary_genres,
-        on_delete=models.CASCADE,
-    )
     publisher = models.CharField(max_length=50)
-    number_of_pages = models.IntegerField()
-    resume = models.CharField(max_length=500)
 
 
 class Books_at_library(models.Model):
