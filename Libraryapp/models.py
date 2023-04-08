@@ -50,6 +50,6 @@ class Borrow(models.Model):
         Library,
         on_delete=models.CASCADE,
     )
-    borrow_date = models.DateTimeField(auto_now=True)
+    borrow_date = models.DateTimeField()
     end_date = models.DateTimeField()
     return_date = models.DateTimeField(blank=True, null=True)
