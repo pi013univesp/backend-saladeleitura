@@ -113,17 +113,17 @@ class RegisterView(GenericAPIView):
                         "message": "Todos os livros estao emprestados",
                     }, status=HTTPStatus.BAD_REQUEST)
                 
-                log_print("Passando request_data para o serializer")
-                borrow_save = BorrowSerializer(data=request_data)
-
                 inDate = datetime.now()
                 date_formated = inDate.strftime("%Y-%m-%d %H:%M:%S")
 
-                log_print("salvando emprestimo e livro na biblioteca")
-                borrow_save.borrow_date = date_formated
+                log_print("salvando data do emprestimo")
+                request_data["borrow_date"] = date_formated
+
+                log_print("Passando request_data para o serializer")
+                borrow_save = BorrowSerializer(data=request_data)
                 
                 if borrow_save.is_valid():
-                    log_print(f"Salvando no banco")
+                    log_print("Salvando no banco")
                     borrow_save.save()
                     book_at_library.number_of_borrowed_books += 1
                     book_at_library.save()
