@@ -10,4 +10,8 @@ class BookSerializer(serializers.ModelSerializer):
             "title",
             "author",
             "publisher",
+            "especie",
+            "data",
+            "tombo",
+            "procedencia",
         )

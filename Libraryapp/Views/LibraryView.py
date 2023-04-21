@@ -46,6 +46,10 @@ class LoginView(GenericAPIView):
                 log_print("email e senha validos")
                 return JsonResponse({
                     "message": "Ok",
+                    "data": {
+                        "id": library.id,
+                        "name": library.name
+                    }
                 }, status=HTTPStatus.OK)   
             else:
                 log_print("senha incorreta")
