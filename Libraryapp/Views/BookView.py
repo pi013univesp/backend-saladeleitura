@@ -125,23 +125,31 @@ class UpdateView(GenericAPIView):
 
             title = request_data.get("title")
             author = request_data.get("author")
-            literary_genre_fk = request_data.get("literary_genre_fk")
             publisher = request_data.get("publisher")
-            number_of_pages = request_data.get("number_of_pages")
-            resume = request_data.get("resume")
+            especie = request_data.get("especie")
+            data = request_data.get("data")
+            tombo = request_data.get("tombo")
+            procedencia = request_data.get("procedencia")
+
 
             book = Book.objects.get(id=pk)
-            log_print(f"fazendo atualizacoes: titulo:{title}, autor:{author}, fk do genero literario:{literary_genre_fk}, publicacao: {publisher}, numero de paginas: {number_of_pages}")
+            log_print(f"fazendo atualizacoes: titulo:{title}, autor:{author}, publicacao: {publisher}")
 
             book.title = title if title != None else book.title
             book.author = author if author != None else book.author
             book.publisher = publisher if publisher != None else book.publisher
+
+            book.especie = especie if especie != None else book.especie
+            book.data = data if data != None else book.data
+            book.tombo = tombo if tombo != None else book.tombo
+            book.procedencia = procedencia if procedencia != None else book.procedencia
 
             log_print(f"Salvando no banco")
             book.save()
 
             return JsonResponse({
                 "message": "Livro Atualizado",
+                "data": book
             }, status=HTTPStatus.OK)
 
         except Exception as e:

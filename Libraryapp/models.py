@@ -17,6 +17,10 @@ class Client(models.Model):
 
 class Book(models.Model):
     id = models.AutoField(primary_key=True)
+    especie = models.CharField(max_length=50, blank=True, null=True)
+    data = models.DateTimeField(blank=True, null=True)
+    tombo = models.DateTimeField(blank=True, null=True)
+    procedencia = models.CharField(max_length=50, blank=True, null=True)
     title = models.CharField(max_length=50)
     author = models.CharField(max_length=50)
     publisher = models.CharField(max_length=50)
