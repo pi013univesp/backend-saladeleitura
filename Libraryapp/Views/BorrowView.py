@@ -134,7 +134,7 @@ class RegisterView(GenericAPIView):
             else:
                 return JsonResponse({
                     "message": "Esse cliente tem pendencia de livro"
-                }, status=HTTPStatus.BAD_REQUEST)
+                }, status=HTTPStatus.OK)
 
         except Exception as e:
             return JsonResponse({

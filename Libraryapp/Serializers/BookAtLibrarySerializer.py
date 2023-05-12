@@ -14,7 +14,14 @@ class BookAtLibrarySerializer(serializers.ModelSerializer):
 
 
 class GETBookAtLibrarySerializer(serializers.ModelSerializer):
+    book_id = serializers.CharField(source='book_fk.id')
     book_title = serializers.CharField(source='book_fk.title')
+    book_data = serializers.CharField(source='book_fk.data')
+    book_especie = serializers.CharField(source='book_fk.especie')
+    book_tombo = serializers.CharField(source='book_fk.tombo')
+    book_procedencia = serializers.CharField(source='book_fk.procedencia')
+    book_author = serializers.CharField(source='book_fk.author')
+    book_publisher = serializers.CharField(source='book_fk.publisher')
     library_name = serializers.CharField(source='library_fk.name')
 
     class Meta:
@@ -27,4 +34,11 @@ class GETBookAtLibrarySerializer(serializers.ModelSerializer):
             "number_of_borrowed_books",
             "book_title",
             "library_name",
+            "book_data",
+            "book_especie",
+            "book_tombo",
+            "book_procedencia",
+            "book_author",
+            "book_publisher",
+            "book_id",
         )

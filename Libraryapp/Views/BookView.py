@@ -149,7 +149,7 @@ class UpdateView(GenericAPIView):
 
             return JsonResponse({
                 "message": "Livro Atualizado",
-                "data": book
+                "data": book.data
             }, status=HTTPStatus.OK)
 
         except Exception as e:
