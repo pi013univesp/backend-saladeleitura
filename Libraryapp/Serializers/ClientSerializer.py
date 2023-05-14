@@ -8,6 +8,7 @@ class ClientRegisterSerializer(serializers.ModelSerializer):
             "name",
             "phone",
             "address",
+            "library_fk",
         )
 
 class ClientGetSerializer(serializers.ModelSerializer):
@@ -18,4 +19,5 @@ class ClientGetSerializer(serializers.ModelSerializer):
             "name",
             "phone",
             "address",
+            "library_fk",
         )

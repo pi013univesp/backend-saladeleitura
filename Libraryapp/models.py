@@ -13,6 +13,11 @@ class Client(models.Model):
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=16)
     address = models.CharField(max_length=100)
+    library_fk = models.ForeignKey(
+        Library,
+        on_delete=models.CASCADE,
+        blank=True, null=True
+    )
 
 
 class Book(models.Model):
