@@ -121,6 +121,7 @@ class UpdateView(GenericAPIView):
             name = request_data.get("name")
             phone = request_data.get("phone")
             address = request_data.get("address")
+            library_fk = request_data.get("library_fk")
 
             client = Client.objects.get(id=pk)
             log_print(f"fazendo atualizacoes:  nome:{name}, endereco:{address}, telefone:{phone}")
@@ -128,6 +129,8 @@ class UpdateView(GenericAPIView):
             client.name = name if name != None else client.name
             client.address = address if address != None else client.address
             client.phone = phone if phone != None else client.phone
+            client.library_fk = library_fk if library_fk != None else client.library_fk
+
             
             log_print(f"Salvando no banco")
             client.save()
