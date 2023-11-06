@@ -62,3 +62,9 @@ class Borrow(models.Model):
     borrow_date = models.DateTimeField()
     end_date = models.DateTimeField()
     return_date = models.DateTimeField(blank=True, null=True)
+
+class Comment(models.Model):
+    id = models.AutoField(primary_key=True)
+    forum = models.IntegerField()
+    name = models.CharField(max_length=100)
+    commentText = models.CharField(max_length=2000)
