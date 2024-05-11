@@ -5,6 +5,7 @@ from Libraryapp.Serializers.BorrowSerializer import BorrowSerializer, GETBorrowS
 from Libraryapp.utils.functions import log_print
 from Libraryapp.models import Borrow, Client, Book, Library, Books_at_library
 from datetime import datetime
+from django.db.models import Count
 
 
 class GetAllView(GenericAPIView):
@@ -264,3 +265,23 @@ class BorrowCloseView(GenericAPIView):
                 "exception_name": type(e).__name__,
                 "exception_args": e.args
             }, status=HTTPStatus.BAD_REQUEST)   
+
+class TopBorrowedBooks(GenericAPIView):
+    def get(self, request):
+        top_borrowed_books = Borrow.objects.values('book_fk').annotate(total_borrows=Count('book_fk')).order_by('-total_borrows')[:10]
+
+        top_borrowed_books_details = []
+        
+        for book_info in top_borrowed_books:
+            book_id = book_info['book_fk']
+            total_borrows = book_info['total_borrows']
+            book = Book.objects.get(id=book_id) 
+            book_name = book.title 
+            top_borrowed_books_details.append({
+                'nome': book_name,
+                'numerode_alugueis': total_borrows
+            })
+
+        return JsonResponse({
+            "data": top_borrowed_books_details
+        }, status=HTTPStatus.OK)

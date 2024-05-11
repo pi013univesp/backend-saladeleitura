@@ -5,6 +5,7 @@ from .Views import BookView
 from .Views import BookAtLibraryView
 from .Views import BorrowView
 from .Views import CommentView
+from .Views import TrilhaView
 
 app_name = "Libraryapp"
 
@@ -41,8 +42,16 @@ urlpatterns = [
     path('borrow/update/<int:pk>', BorrowView.UpdateView.as_view(), name='borrow-update'),
     path('borrow/close/<int:pk>', BorrowView.BorrowCloseView.as_view(), name='borrow-close'),
     path('borrow/in-debt/', BorrowView.GetAllBorrowInDebt.as_view(), name='borrow-get-all-debt'),
+    path('borrow/top-books/', BorrowView.TopBorrowedBooks.as_view(), name='borrow-top-books'),
 
     path('comment/', CommentView.GetAllView.as_view(), name='comment-get-all'),
     path('comment/register/', CommentView.RegisterView.as_view(), name='comment-register'),
     path('comment/<int:id>', CommentView.GetCommentByIdView.as_view(), name='comment-get-forum'),
+
+    path('trilha/', TrilhaView.GetAllTrilhaView.as_view(), name='trilha-get-all'),
+    path('trilhaespecifica/<int:pk>', TrilhaView.GetTrilhaByIdView.as_view(), name='trilha-get'),
+    path('trilha/<int:pk>', TrilhaView.GetTrilhaLivroByIdView.as_view(), name='trilha-get-id'),
+    path('trilha/delete/<int:pk>', TrilhaView.DeleteView.as_view(), name='trilha-delete'),
+    path('trilha/register/', TrilhaView.RegisterView.as_view(), name='trilha-register'),
+    path('trilha/livro/', TrilhaView.RegisterTrilhaLivroView.as_view(), name='trilhaLivro-register'),
 ]
