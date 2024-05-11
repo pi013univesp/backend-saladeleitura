@@ -68,23 +68,3 @@ class Comment(models.Model):
     forum = models.IntegerField()
     name = models.CharField(max_length=100)
     commentText = models.CharField(max_length=2000)
-
-class Trilha(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-
-class TrilhaLivros(models.Model):
-    id = models.AutoField(primary_key=True)
-    book_fk = models.ForeignKey(
-        Book,
-        on_delete=models.CASCADE,
-    )
-    trilha_fk = models.ForeignKey(
-        Trilha,
-        on_delete=models.CASCADE,
-    )
-    library_fk = models.ForeignKey(
-        Library,
-        on_delete=models.CASCADE,
-    )
-    posicao_na_trilha = models.IntegerField()
